@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <link rel="manifest" href="/manifest.json">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https://ssl.gstatic.com; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+  <script src="components/loader.js"></script>
+  <script src="lib/onsenui/js/onsenui.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase.js"></script>
+
+  <link rel="stylesheet" href="components/loader.css">
+  <link rel="stylesheet" href="lib/onsenui/css/onsenui.css">
+  <link rel="stylesheet" href="lib/onsenui/css/onsen-css-components.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script>
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js";
+// Import the functions you need from the SDKs you need
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDxajL_H1AkSW6Bc12q_2y1Gaq6CI9sdxw",
+  authDomain: "nikkiapp-a6e33.firebaseapp.com",
+  databaseURL: "https://nikkiapp-a6e33-default-rtdb.firebaseio.com",
+  projectId: "nikkiapp-a6e33",
+  storageBucket: "nikkiapp-a6e33.appspot.com",
+  messagingSenderId: "306411959281",
+  appId: "1:306411959281:web:41ce6374eb092537eeca50",
+  measurementId: "G-YWQG30TQ4F"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+    ons.ready(function() {
+      console.log("Onsen UI is ready!");
+    });
+/*
+    document.addEventListener('show', function(event) {
+      var page = event.target;
+      var titleElement = document.querySelector('#toolbar-title');
+
+      if (page.matches('#first-page')) {
+        titleElement.innerHTML = 'My app - Page 1';
+      } else if (page.matches('#second-page')) {
+        titleElement.innerHTML = 'My app - Page 2';
+      }else if (page.matches('#third-page')) {
+        titleElement.innerHTML = 'My app - Page 3';
+      }
+    }
+    
+    );
+*/
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
+    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+  }).catch(function (err) {
+    console.log('ServiceWorker registration failed: ', err);
+  });
+}
+self.addEventListener('install', function (event) {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+    .then(function (cache) {
+      console.log('Opened cache');
+      return cache.addAll(urlsToCache);
+    })
+  );
+});
+self.addEventListener('activate', function (event) {
+  var cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then(function (cacheNames) {
+      return Promise.all(
+        cacheNames.map(function (cacheName) {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
+
+self.addEventListener('fetch', function (event) {
+  event.respondWith(
+    caches.match(event.request)
+    .then(function (response) {
+      if (response) {
+        return response;
+      }
+
+      var fetchRequest = event.request.clone();
+      return fetch(fetchRequest).then(
+        function (response) {
+          if (!response || response.status !== 200 || response.type !== 'basic') {
+            return response;
+          }
+
+          var responseToCache = response.clone();
+          caches.open(CACHE_NAME)
+            .then(function (cache) {
+              cache.put(event.request, responseToCache);
+            });
+          return response;
+        }
+      );
+    })
+  );
+});
+
+    if (ons.platform.isIPhoneX()) {
+      document.documentElement.setAttribute('onsflag-iphonex-portrait', '');
+      document.documentElement.setAttribute('onsflag-iphonex-landscape', '');
+    }
+  </script>
+</head>
+<body>
+  <ons-page>
+
+   
+    <ons-navigator var="myNavigator" page="toppage.html" active>
+</ons-navigator>
+  </ons-page>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+  <script src="js/ncmb.min.js"></script>
+  <script src="js/app.js"></script>
+  
+</body>
+</html>

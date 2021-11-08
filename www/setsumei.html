@@ -1,0 +1,53 @@
+<ons-page>
+  <div class="font">
+<div style="text-align: center; margin-top: 60px;">
+  <p style="margin-top: 100px;">
+    <p>
+イイコト<br><br>
+は最近あった"良いこと"<br>
+を誰かと共有するアプリです。<br>
+<br>
+身近にあった小さな幸せを改めて感じていただけると嬉しいです。<br>
+<br>
+まずは、次の画面でログインして
+<br>
+嬉しかったことや楽しかったこと、そしてその時のあなたの思いを書いてみましょう！
+  </p>
+
+<p style="margin-top: 60px;">
+        <ons-button onclick="start()">ログイン画面に進む</ons-button>
+      </p>
+  </div>
+  </div>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https://ssl.gstatic.com; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+  <script src="components/loader.js"></script>
+  <script src="lib/onsenui/js/onsenui.min.js"></script>
+
+  <link rel="stylesheet" href="components/loader.css">
+  <link rel="stylesheet" href="lib/onsenui/css/onsenui.css">
+  <link rel="stylesheet" href="lib/onsenui/css/onsen-css-components.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script>
+
+
+    if (ons.platform.isIPhoneX()) {
+      document.documentElement.setAttribute('onsflag-iphonex-portrait', '');
+      document.documentElement.setAttribute('onsflag-iphonex-landscape', '');
+    }
+  </script>
+  <script src="js/app.js"></script>
+</head>
+
+<body>
+
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+  <script src="js/ncmb.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</ons-page>

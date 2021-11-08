@@ -1,0 +1,144 @@
+<ons-page>
+  <div class = "desk">
+  <ons-navigator id="formNav">
+    
+    <ons-toolbar>
+      <div class="center" id="form-title"></div>
+    </ons-toolbar>
+    <div style="text-align: center; margin-top: 90px;">
+      <div class="numte">
+      イイコトを投稿(30字以内)
+      </div>
+      <p class ="fontform">
+        ※投稿内容は他のユーザーに公開されます。<br>
+        個人が特定できる、誹謗中傷を<br>含む内容は書き込まないでください。
+        </p>
+      <p>
+        <ons-input id="day" modifier="underbar" type="date" float></ons-input>
+      </p>
+      <div class="leaf2">
+       <p>
+   <img src="lib/onsenui/image/leaf.png" alt="ロゴ" width="250px" height="120px">
+ </p>
+      </div>
+      <!--
+      <p>
+       
+        <ons-select id="category" onchange="editSelects(event)">
+    <option value="ure">嬉しいこと</option>
+    <option value="kana">悲しいこと</option>
+    <option value="tano">楽しみなこと</option>
+  </ons-select>
+ 
+        </p>
+         -->
+        <div class="replet2">
+      <p style="margin-top: 30px;"></p>
+        <textarea id="report" class="textarea textarea--transparent" rows="3" maxlength="30" placeholder="今日の嬉しかったことや楽しかったこと、その時の思いを書きましょう"></textarea>
+      
+        </div>
+        <div class="toukou">
+      <p style="margin-top: 20px;">
+        <ons-button id="send-report">投稿する</ons-button>
+      </p>
+        
+      <p style="margin-top: 20px;">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSdjHGk5Gn3bOMb69F2bMZJ2qEly0Q0Eid7X8aVOCr9Ad7O_Fw/viewform?usp=sf_link" target="_blank" rel="noopener noreferrer">
+  使用後アンケートに回答する
+</a><br><br>
+<a href="#" id="logoutButton">ログアウトする</a>
+      </p>
+      </div>
+    </div>
+    
+  </ons-navigator>
+  </div>
+  <head>
+    <script src="js/app.js"></script>
+    
+  </head>
+  <script>
+    
+$(function() {
+        $("#logoutButton").click(onLogoutButton);
+        });
+
+    ons.getScriptPage().onInit = async function() {
+      // 日報を登録するボタンを押した時の処理です
+      $('#send-report').on('click', async e => {
+        // 情報の取得
+        const date = new Date($('#day').val());
+        // 日報の保存処理
+        const report = await findOrCreate(date);
+  // ACLを準備
+//   読み込みは誰でも可能
+//   編集は本人のみ
+        const acl = new ncmb.Acl();
+        const user = ncmb.User.getCurrentUser();
+        //const category =$('[id=category] option:selected').text();
+        
+acl
+  .setPublicReadAccess(true)
+  .setUserWriteAccess(user, true);
+report
+  //.set('category', category)
+  .set('day', date)
+  .set('report', $('#report').val())
+  .set('user', user)
+  .set('userName', user.get('userName'))
+  .set('acl', acl);
+
+  // objectIdがない = 新規作成 の場合はsave
+// objectIdがある = 更新 の場合はupdate
+const method = report.objectId ? 'update' : 'save';
+const message = method === 'save' ? '投稿' : '更新';
+// 新規作成または更新を実行
+try {
+  await report[method]();
+  ons.notification.alert(`イイコトの${message}に成功しました`);
+} catch (e) {
+  ons.notification.alert(`イイコトの${message}に失敗しました`);
+}
+      });
+      const user = ncmb.User.getCurrentUser(); // ここを書き換えます
+      if (!user) {
+        // 未ログインの場合
+        return $('#formNav')[0].pushPage('login.html');
+      }
+      try {
+        // セッションの有効性を確認
+        await ncmb.DataStore('Hello').fetch();
+      } catch (e) {
+        // セッションが無効な場合エラーになるので、その場合はlocalStorageの認証データを削除
+        localStorage.removeItem(`NCMB/${ncmb.apikey}/CurrentUser`);
+        ncmb.sessionToken = null;
+        // ログイン画面に遷移
+        return $('#formNav')[0].pushPage('login.html');
+      }
+    }
+
+
+    async function findOrCreate(date) {
+      // すでに同じ日付の日報があればそれを返す
+      const Report = ncmb.DataStore('Report');
+  const user = ncmb.User.getCurrentUser();
+  const report = await Report
+    .equalTo('userName', user.get('userName'))
+    .equalTo('day', date)
+    //.equalTo('category',category)
+    .fetch();
+  return report.objectId ? report : new Report();
+}
+ons.getScriptPage().onShow = async function() {
+  $('#form-title').html('イイコトを書く');
+  const date = new Date(dayjs().format('YYYY-MM-DD'));
+  $('#day').val(dayjs(date).format('YYYY-MM-DD'));
+  const report = await findOrCreate(date);
+  if (report.objectId) {
+    // 日報があれば、その内容を表示
+    $('#report').val(report.get('report'));
+  }
+}
+
+  </script>
+</ons-page>

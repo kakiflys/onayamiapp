@@ -1,0 +1,131 @@
+
+<ons-page>
+  <div class = "box">
+  <ons-navigator id="formNav0">
+  <ons-toolbar>
+     
+    <div class="center" id="form-title">自分のイイコト</div>
+  </ons-toolbar>
+  <div style="text-align: center; margin-top: 60px;">
+    <!--
+      <h3>日付を選択してください</h3>
+    <p>
+      <ons-input id="date" modifier="underbar" type="date" float></ons-input>
+    </p>
+    
+    <p>
+      <ons-select id="catem" onchange="editSelects(event)">
+    <option value="urem">嬉しいこと</option>
+    <option value="kanam">悲しいこと</option>
+    <option value="tanom">楽しみなこと</option>
+  </ons-select>
+      </p>
+-->
+      
+    <p style="margin-top: 100px;">
+      <ons-button  id="view-reportm">自分のイイコトを確認</ons-button>
+    </p>
+    <ons-list2 class="font" id="reportsm">
+    </ons-list2>
+  </div>
+  </div>
+   </ons-navigator>
+  </div>
+  <script>
+    ons.getScriptPage().onInit = async function() {
+      // 日報を閲覧するボタンを押した時の処理
+      $('#view-reportm').on('click', async e => {
+        // 検索対象の日付を取得
+        //const day = new Date($('#date').val());
+        //const categorym =$('[id=catem] option:selected').text(); 
+        
+        // 該当日の日報を取得
+        const reportsm = await fetchReportsm();
+        // 取得した日報を表示
+        viewReportsm(reportsm);
+      })
+    }
+/*
+    ons.getScriptPage().onShow = async function() {
+      $('#date').val(dayjs().format('YYYY-MM-DD'));
+
+    }
+*/
+var GameScore2 = ncmb.DataStore("Report");
+const usermy = ncmb.User.getCurrentUser();
+GameScore2.equalTo('userName',usermy.get('userName'))
+         .count()
+         .fetchAll()
+         .then(function(results2){
+            console.log(results2.count); // 検索結果の件数を表示
+            var str2 = results2.count;
+      //document.getElementById('reportcount').innerHTML = str2 ;
+
+      if(results2.count>=0 && results2.count<1){
+        $('.box').css({
+        backgroundImage: 'url(lib/onsenui/image/box0.png)' 
+    });
+      }else if(results2.count>=1 && results2.count<2){
+        $('.box').css({
+        backgroundImage: 'url(lib/onsenui/image/box1.png)' 
+    });
+      }else if(results2.count>=2 && results2.count<3){
+        $('.box').css({
+        backgroundImage: 'url(lib/onsenui/image/box2.png)' 
+    });
+      }else if(results2.count>=3 && results2.count<4){
+        $('.box').css({
+        backgroundImage: 'url(lib/onsenui/image/box3.png)' 
+    });
+      }else if(results2.count>=4 && results2.count<5){
+        $('.box').css({
+        backgroundImage: 'url(lib/onsenui/image/box4.png)' 
+    });
+      }else if(results2.count>=5 && results2.count<6){
+        $('.box').css({
+        backgroundImage: 'url(lib/onsenui/image/box5.png)' 
+    });
+      }else if(results2.count>=6 && results2.count<7){
+        $('.box').css({
+        backgroundImage: 'url(lib/onsenui/image/box6.png)' 
+    });
+      }else if(results2.count>=7){
+        $('.box').css({
+        backgroundImage: 'url(lib/onsenui/image/box7.png)' 
+    });
+      }
+
+          })
+         .catch(function(err){
+            console.log(err);
+          });
+          
+    // 日報の取得
+  async function fetchReportsm() {
+      const usermy = ncmb.User.getCurrentUser();
+const Reportm = ncmb.DataStore('Report');
+  return await Reportm
+    //.equalTo('category',categorym)
+    //.equalTo('day', day)
+    .equalTo('userName',usermy.get('userName'))
+    .fetchAll();
+
+    }
+
+    // 日報の表示処理
+    function viewReportsm(reportsm) {
+      const htmlm = [];
+      //html.push(`<ons-list-header>${dayjs(day).format('YYYY年MM月DD日の日報')}</ons-list-header>`)
+      reportsm.forEach(myreport => {
+        htmlm.push(`
+           
+            <div class="expandable-content">
+              ${myreport.get('report').replace(/\n/g, '<br />')}
+            </div>
+          
+        `)
+      });
+      $('#reportsm').html(htmlm.join(''));
+    }
+  </script>
+</ons-page>

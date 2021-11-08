@@ -1,0 +1,81 @@
+<ons-page>
+  <div style="text-align: center; margin-top: 60px;">
+    
+    <p>
+      <ons-input id="userName" modifier="underbar" placeholder="ユーザネーム" float></ons-input>
+    </p>
+    <p>
+      <ons-input id="password" modifier="underbar" type="password" placeholder="パスワード" float></ons-input>
+    </p>
+    <p style="margin-top: 30px;">
+      <ons-button id="login">登録/ログイン</ons-button>
+    </p>
+    <p class="fontform" style="font-weight:bold;">
+      ユーザーネームとパスワードは変更できません。<br>
+      登録後に忘れないようお願いします。<br><br>
+      また、ユーザーネームと投稿は研究に使用する可能性があることをご了承ください(ユーザーネームは公開されません)
+    </p>
+  </div>
+  
+  <head>
+    
+    <script src="js/app.js"></script>
+    
+  </head>
+
+  <script>
+
+    ons.getScriptPage().onShow = function() {
+      $('#form-title').html('新規登録/ログイン');
+    }
+    
+    ons.getScriptPage().onInit = function() {
+      $('#form-title').html('新規登録/ログイン');
+
+      // ログインボタンを押した時の処理です
+      $('#login').on('click', async e => {
+        const userName = $('#userName').val();
+        const password = $('#password').val();
+        
+
+        // すでに登録済みの場合はエラーになるので、try/catchでエラーを潰します
+        try {
+          await registerUser(userName, password);
+        } catch (e) {
+        }
+        try {
+          // ログイン処理です。
+          await loginUser(userName, password);
+          // ログインできたら日報入力画面に遷移します
+          $('#formNav')[0].resetToPage('form.html');
+          location.reload();
+        } catch (e) {
+          // エラーの場合ID/パスワード不一致になります
+          ons.notification.alert('ログイン失敗しました。ユーザ名、パスワードを確認してください');
+          return false;
+        }
+      });
+    }
+
+    // 新規ユーザ登録処理です
+    async function registerUser(userName, password) {
+      const user = new ncmb.User();
+  user
+    
+    .set('userName', userName)
+    .set('password', password);
+  await user.signUpByAccount();
+    }
+
+    // ユーザログイン処理です
+    async function loginUser(userName, password) {
+      await ncmb.User.login(userName, password);
+  const user = ncmb.User.getCurrentUser();
+  const acl = new ncmb.Acl();
+  acl
+    .setPublicReadAccess(true)
+    .setUserWriteAccess(user, true);
+  await user.set('acl', acl).update();
+    }
+  </script>
+</ons-page>
